@@ -1,1 +1,16 @@
 npx commitlint --edit $1
+STAGED_ENV=$(git diff --cached --name-only --diff-filter=ACM | grep -E '(^|/)\.env(\..*)?$' || true)
+
+if [ -n "$STAGED_ENV" ]; then
+  echo "⚠ Commit blocked: .env file detected in staged changes."
+  echo "Files found:"
+  echo "$STAGED_ENV"
+  echo ""
+  echo "Add .env files to your .gitignore and remove it from tracking:"
+  echo "  git rm --cached .env '...'"
+  echo "To skip this hook:"
+  echo "  git commit -m '...' -n"
+  exit 1
+fi
+
+exit 0
